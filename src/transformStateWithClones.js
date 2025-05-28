@@ -8,27 +8,26 @@
  */
 function transformStateWithClones(state, actions) {
   const stateHistory = [];
-  let currentState = { ...state }; // Create a shallow copy of the initial state
+  let currentState = { ...state }; // Clone the initial state
 
   for (const action of actions) {
     switch (action.type) {
+      case 'clear':
+        currentState = {};
+        break;
       case 'addProperties':
         currentState = { ...currentState, ...action.extraData };
         break;
       case 'removeProperties':
-        currentState = { ...currentState };
-
         for (const key of action.keysToRemove) {
           delete currentState[key];
         }
         break;
-      case 'clear':
-        currentState = {};
-        break;
       default:
-        throw new Error(`Unknown action type: ${action.type}`);
+        // Unknown action type; no changes made
+        break;
     }
-    stateHistory.push(currentState);
+    stateHistory.push({ ...currentState });
   }
 
   return stateHistory;
